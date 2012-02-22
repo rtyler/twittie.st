@@ -1,0 +1,20 @@
+%html
+  %head
+    %title
+      Twi.st
+    %script{:type => "text/javascript", :src => "/amber/js/amber.js"}
+    %script{:type => "text/javascript"}
+      loadAmber({
+      files: [#{javascript_files}],
+      prefix: '../js/', /* For some reason Amber looks in the ./amber/ tree for our files */
+      ready: function() {
+      }});
+  %body
+    - if development?
+      %div{:style => 'float: right; clear: all'}
+        %button{:onclick => "smalltalk.Browser._open();"}
+          Run IDE
+      %br/
+    %h1
+      Twi.st
+    %br/
