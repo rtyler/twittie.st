@@ -1,16 +1,14 @@
 require 'rubygems'
 require 'sinatra'
+require 'haml'
 
 
-set :root, File.dirname(__FILE__)
-set :public_folder, File.dirname(__FILE__)
+set :dump_errors, true
 set :static, true
+set :public_folder, File.dirname(__FILE__)
 
 def development?
   !(ENV['RACK_ENV'] == 'production')
-end
-get '/', :provides => 'html'  do
-  haml :index
 end
 
 def javascript_files
@@ -24,11 +22,16 @@ def javascript_files
 end
 
 
+get '/', :provides => 'html'  do
+  haml :index
+end
+
 if development?
   set :logging, true
+  disable :protection
 
   # Only enable the saving mechanism in test/development
-  put '/*' do
+  put '*' do
     unless request.body.nil?
       path = File.join(File.dirname(__FILE__), request.path)
       puts ">> Commiting changes to #{path}"

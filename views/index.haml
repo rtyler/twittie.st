@@ -3,10 +3,18 @@
     %title
       Twi.st
     %script{:type => "text/javascript", :src => "/amber/js/amber.js"}
+
+    - if development?
+      %script{:type => "text/javascript", :src => "/contrib/bootstrap/js/bootstrap.js"}
+      %link{:type => "text/css", :media => "screen", :href => "/contrib/bootstrap/css/bootstrap.css"}
+    - else
+      %script{:type => "text/javascript", :src => "/contrib/bootstrap/js/bootstrap.min.js"}
+      %link{:type => "text/css", :media => "screen", :href => "/contrib/bootstrap/css/bootstrap.min.css"}
+
     %script{:type => "text/javascript"}
       loadAmber({
       files: [#{javascript_files}],
-      prefix: '../js/', /* For some reason Amber looks in the ./amber/ tree for our files */
+      prefix: '../js', /* For some reason Amber looks in the ./amber/ tree for our files */
       ready: function() {
       }});
   %body
