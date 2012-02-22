@@ -1,5 +1,5 @@
 
 
 task :server do
-  sh "shotgun -s thin app.rb"
+  sh "ruby -r thin app.rb -p 9393"
 end
