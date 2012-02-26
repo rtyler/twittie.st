@@ -5,7 +5,11 @@ Object subclass: #TwistModel
 
 !TwistModel methodsFor: 'accessors'!
 
-username: aName
+setUsername: aName
+	username := aName.
+!
+
+setUsernameAgain: aName
 	username := aName.
 ! !
 

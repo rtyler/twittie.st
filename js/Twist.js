@@ -17,16 +17,32 @@ referencedClasses: []
 smalltalk.TwistModel);
 
 smalltalk.addMethod(
-unescape('_username_'),
+unescape('_setUsername_'),
 smalltalk.method({
-selector: unescape('username%3A'),
+selector: unescape('setUsername%3A'),
 category: 'accessors',
 fn: function (aName){
 var self=this;
 (self['@username']=aName);
 return self;},
 args: ["aName"],
-source: unescape('username%3A%20aName%0A%09username%20%3A%3D%20aName.'),
+source: unescape('setUsername%3A%20aName%0A%09username%20%3A%3D%20aName.'),
+messageSends: [],
+referencedClasses: []
+}),
+smalltalk.TwistModel);
+
+smalltalk.addMethod(
+unescape('_setUsernameAgain_'),
+smalltalk.method({
+selector: unescape('setUsernameAgain%3A'),
+category: 'accessors',
+fn: function (aName){
+var self=this;
+(self['@username']=aName);
+return self;},
+args: ["aName"],
+source: unescape('setUsernameAgain%3A%20aName%0A%09username%20%3A%3D%20aName.'),
 messageSends: [],
 referencedClasses: []
 }),

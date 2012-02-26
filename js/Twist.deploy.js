@@ -12,9 +12,20 @@ return self;}
 smalltalk.TwistModel);
 
 smalltalk.addMethod(
-unescape('_username_'),
+unescape('_setUsername_'),
 smalltalk.method({
-selector: unescape('username%3A'),
+selector: unescape('setUsername%3A'),
+fn: function (aName){
+var self=this;
+(self['@username']=aName);
+return self;}
+}),
+smalltalk.TwistModel);
+
+smalltalk.addMethod(
+unescape('_setUsernameAgain_'),
+smalltalk.method({
+selector: unescape('setUsernameAgain%3A'),
 fn: function (aName){
 var self=this;
 (self['@username']=aName);

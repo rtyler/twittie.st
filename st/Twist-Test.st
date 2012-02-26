@@ -9,7 +9,11 @@ testCorrectFeedUrl
 	"Ensure that if we set TwistModel username, the feedUrl is correct"
 	| model |
 	model := TwistModel new.
-	model username: 'testbot'.
+	model stUsername: 'testbot'.
 	self assert: 'http://twitter.com/status/user_timeline/testbot.json?count=10&callback=?' equals: model feedUrl.
+!
+
+testFailure
+	self deny: true.
 ! !
 
