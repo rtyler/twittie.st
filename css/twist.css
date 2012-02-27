@@ -1,0 +1,23 @@
+#twist_container {
+}
+
+.TwitterSearch {
+    width: 400px;
+    height: 100%;
+    padding: 2px;
+    overflow: scroll;
+    margin: 5px;
+    border: 1px solid #cecece;
+    float: left;
+}
+
+.TwitterAvatar {
+    float: left;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.TwitterResult {
+    padding: 5px;
+    border-bottom: 2px solid #cecece;
+}
