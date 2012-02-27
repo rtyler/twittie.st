@@ -1,7 +1,4 @@
 smalltalk.addPackage('Twist', {});
-smalltalk.addClass('TWWidget', smalltalk.Widget, [], 'Twist');
-
-
 smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count', 'timelines'], 'Twist');
 smalltalk.addMethod(
 unescape('_models'),
@@ -61,6 +58,9 @@ fn: function () {
 }
 }),
 smalltalk.TwistApp.klass);
+
+
+smalltalk.addClass('TWWidget', smalltalk.Widget, [], 'Twist');
 
 
 smalltalk.addClass('TwitterText', smalltalk.TWWidget, ['text', 'hashtags', 'mentions', 'links'], 'Twist');
@@ -235,11 +235,10 @@ smalltalk.addMethod(
 unescape('_renderOn_'),
 smalltalk.method({
 selector: unescape('renderOn%3A'),
-fn: function (html) {
-    var self = this;
-    smalltalk.send(smalltalk.send(html, "_div", []), "_with_", [function () {(function ($rec) {smalltalk.send($rec, "_class_", ["twitter_avatar"]);return smalltalk.send($rec, "_with_", [function () {return function ($rec) {smalltalk.send($rec, "_href_", [smalltalk.send(unescape("https%3A//twitter.com/"), "__comma", [self['@username']])]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send(unescape("Visiting%20the%20profile%20for%20@"), "__comma", [self['@username']])]);return smalltalk.send(event, "_preventDefault", []);}]);return smalltalk.send($rec, "_with_", [function () {return smalltalk.send(smalltalk.send(html, "_img", []), "_src_", [self['@image']]);}]);}(smalltalk.send(html, "_a", []));}]);}(smalltalk.send(html, "_div", [])));return smalltalk.send(html, "_with_", [self['@text']]);}]);
-    return self;
-}
+fn: function (html){
+var self=this;
+(function($rec){smalltalk.send($rec, "_class_", ["TwitterResult"]);return smalltalk.send($rec, "_with_", [(function(){smalltalk.send(html, "_with_", [(function($rec){smalltalk.send($rec, "_withName_", [self['@username']]);smalltalk.send($rec, "_withImage_", [self['@image']]);return smalltalk.send($rec, "_yourself", []);})(smalltalk.send((smalltalk.TwitterAvatar || TwitterAvatar), "_new", []))]);return smalltalk.send(html, "_with_", [self['@text']]);})]);})(smalltalk.send(html, "_div", []));
+return self;}
 }),
 smalltalk.TwitterResult);
 
@@ -343,6 +342,42 @@ smalltalk.send((typeof window == 'undefined' ? nil : window), "_clearInterval_",
 return self;}
 }),
 smalltalk.TwitterSearch);
+
+
+
+smalltalk.addClass('TwitterAvatar', smalltalk.TWWidget, ['username', 'image'], 'Twist');
+smalltalk.addMethod(
+unescape('_renderOn_'),
+smalltalk.method({
+selector: unescape('renderOn%3A'),
+fn: function (html){
+var self=this;
+(function($rec){smalltalk.send($rec, "_class_", ["TwitterAvatar"]);return smalltalk.send($rec, "_with_", [(function(){return (function($rec){smalltalk.send($rec, "_href_", [smalltalk.send(unescape("https%3A//twitter.com/"), "__comma", [self['@username']])]);smalltalk.send($rec, "_onClick_", [(function(event){smalltalk.send((typeof window == 'undefined' ? nil : window), "_alert_", [smalltalk.send(unescape("Visiting%20the%20profile%20for%20@"), "__comma", [self['@username']])]);return smalltalk.send(event, "_preventDefault", []);})]);return smalltalk.send($rec, "_with_", [(function(){return smalltalk.send(smalltalk.send(html, "_img", []), "_src_", [self['@image']]);})]);})(smalltalk.send(html, "_a", []));})]);})(smalltalk.send(html, "_div", []));
+return self;}
+}),
+smalltalk.TwitterAvatar);
+
+smalltalk.addMethod(
+unescape('_withName_'),
+smalltalk.method({
+selector: unescape('withName%3A'),
+fn: function (aUsername){
+var self=this;
+(self['@username']=aUsername);
+return self;}
+}),
+smalltalk.TwitterAvatar);
+
+smalltalk.addMethod(
+unescape('_withImage_'),
+smalltalk.method({
+selector: unescape('withImage%3A'),
+fn: function (imageURL){
+var self=this;
+(self['@image']=imageURL);
+return self;}
+}),
+smalltalk.TwitterAvatar);
 
 
 

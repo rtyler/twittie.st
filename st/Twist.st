@@ -1,8 +1,4 @@
 Smalltalk current createPackage: 'Twist' properties: #{}!
-Widget subclass: #TWWidget
-	instanceVariableNames: ''
-	category: 'Twist'!
-
 Object subclass: #TwistApp
 	instanceVariableNames: 'models count timelines'
 	category: 'Twist'!
@@ -49,6 +45,10 @@ current
 	^ app
 		ifNil: [ app := super new ].
 ! !
+
+Widget subclass: #TWWidget
+	instanceVariableNames: ''
+	category: 'Twist'!
 
 TWWidget subclass: #TwitterText
 	instanceVariableNames: 'text hashtags mentions links'
@@ -167,13 +167,9 @@ asString
 
 renderOn: html
 	html div
+		class: 'TwitterResult';
 		with: [
-			html div class: 'twitter_avatar'; with: [
-				html a href: 'https://twitter.com/', username;
-					onClick: [ :event | window alert: 'Visiting the profile for @', username.
-							event preventDefault.];
-					with: [
-						html img src: image.]].
+			html with: (TwitterAvatar new withName: username; withImage: image; yourself).
 			html with: text].
 ! !
 
@@ -241,5 +237,28 @@ remove
 	"Stop the update and remove the DOM element"
 	container asJQuery remove.
 	window clearInterval: interval.
+! !
+
+TWWidget subclass: #TwitterAvatar
+	instanceVariableNames: 'username image'
+	category: 'Twist'!
+
+!TwitterAvatar methodsFor: 'not yet classified'!
+
+renderOn: html
+	html div class: 'TwitterAvatar'; with: [
+		html a href: 'https://twitter.com/', username;
+			onClick: [ :event | window alert: 'Visiting the profile for @', username.
+					event preventDefault.];
+			with: [
+				html img src: image.]].
+!
+
+withName: aUsername
+	username := aUsername.
+!
+
+withImage: imageURL
+	image := imageURL.
 ! !
 
