@@ -16,8 +16,6 @@ search
 	| query container search |
 	query := '#twist_search_box' asJQuery val.
 	'#twist_search_box' asJQuery val: ''.
-	" XXX: This needs to go away as soon as we cleanly support multiple timelines "
-	'#twist_container' asJQuery empty.
 
 	container := 'search_for_', count asString.
 	count := count + 1.
@@ -135,7 +133,7 @@ renderMention: aMention on: html
 ! !
 
 TWWidget subclass: #TwitterResult
-	instanceVariableNames: 'text username image lang'
+	instanceVariableNames: 'text username image lang id'
 	category: 'Twist'!
 
 !TwitterResult methodsFor: 'accessors'!
@@ -146,11 +144,22 @@ text
 
 username
 	^ username.
+!
+
+remove
+	"Remove myself from the DOM"
+	('#', self elementID) asJQuery remove.
+!
+
+elementID
+	"Return this element's DOM elemnt ID"
+	^ 'TwitterResult_', id asString.
 ! !
 
 !TwitterResult methodsFor: 'initializers'!
 
 withData: data
+	id := data at: 'id'.
 	text := TwitterText new withText: (data at: 'text').
 	username := data at: 'from_user'.
 	image := data at: 'profile_image_url_https'.
@@ -168,17 +177,24 @@ asString
 renderOn: html
 	html div
 		class: 'TwitterResult';
+		id: self elementID;
 		with: [
 			html with: (TwitterAvatar new withName: username; withImage: image; yourself).
 			html with: text].
 ! !
 
 TWWidget subclass: #TwitterTimeline
-	instanceVariableNames: ''
+	instanceVariableNames: 'itemMax'
 	category: 'Twist'!
 
+!TwitterTimeline methodsFor: 'not yet classified'!
+
+initialize
+	itemMax := 50.
+! !
+
 TwitterTimeline subclass: #TwitterSearch
-	instanceVariableNames: 'query limit container polling interval lastid'
+	instanceVariableNames: 'query limit container polling interval lastid results'
 	category: 'Twist'!
 
 !TwitterSearch methodsFor: 'not yet classified'!
@@ -189,6 +205,8 @@ initialize
 	container := nil.
 	lastid := 0.
 	interval := window setInterval: [ self search ] length: 15000.
+	results := Array new.
+	super initialize.
 !
 
 withQuery: aQuery
@@ -217,13 +235,17 @@ displayError: anErrorString
 successWithData: theData
 	"Build out and render the results from a search"
 	container ifNotNil: [
-			 	theData results reversed do: [ :result |
-					| view |
-					(result at: 'id') > lastid
-							ifTrue: [ lastid := result at: 'id' ].
+			 	theData results reversed do: [ :data |
+					| view result |
+					(data at: 'id') > lastid
+							ifTrue: [ lastid := data at: 'id' ].
+
+					result := TwitterResult new withData: data; yourself.
+					results add: result.
 					view := HTMLCanvas new div.
 					container asJQuery prepend: view asJQuery.
-					TwitterResult new withData: result; appendToJQuery: view asJQuery]].
+					result appendToJQuery: view asJQuery]].
+	self trimResults.
 !
 
 inContainer: containerString
@@ -237,6 +259,24 @@ remove
 	"Stop the update and remove the DOM element"
 	container asJQuery remove.
 	window clearInterval: interval.
+!
+
+trimResults
+	"
+	Prune our results Array and remove the DOM elements
+	Otherwise we might suck up a *lot* of memory in the browser,
+	which would be especially bad for popular topics/timelines.
+	"
+	(results size) > itemMax
+		ifTrue: [
+			| count item |
+			count := 0.
+			results size - itemMax timesRepeat: [
+				count := count + 1.
+				item := results at: count.
+				item remove].
+			results removeFrom: 1 to: results size - itemMax.
+			].
 ! !
 
 TWWidget subclass: #TwitterAvatar
