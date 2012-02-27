@@ -1,4 +1,5 @@
 source :gemcutter
 
 gem 'rake'
-gem 'resin'
+gem 'resin', '~> 0.0.3'
+gem 'foreman'
