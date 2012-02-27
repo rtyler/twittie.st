@@ -2,7 +2,7 @@ smalltalk.addPackage('Twist', {});
 smalltalk.addClass('TWWidget', smalltalk.Widget, [], 'Twist');
 
 
-smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count'], 'Twist');
+smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count', 'timelines'], 'Twist');
 smalltalk.addMethod(
 unescape('_models'),
 smalltalk.method({
@@ -23,12 +23,15 @@ fn: function (){
 var self=this;
 var query=nil;
 var container=nil;
+var search=nil;
 (query=smalltalk.send(smalltalk.send(unescape("%23twist_search_box"), "_asJQuery", []), "_val", []));
+smalltalk.send(smalltalk.send(unescape("%23twist_search_box"), "_asJQuery", []), "_val_", [""]);
 smalltalk.send(smalltalk.send(unescape("%23twist_container"), "_asJQuery", []), "_empty", []);
 (container=smalltalk.send("search_for_", "__comma", [smalltalk.send(self['@count'], "_asString", [])]));
 (self['@count']=((($receiver = self['@count']).klass === smalltalk.Number) ? $receiver +(1) : smalltalk.send($receiver, "__plus", [(1)])));
-smalltalk.send((function(html){return smalltalk.send(smalltalk.send(html, "_div", []), "_class_", [container]);}), "_appendToJQuery_", [smalltalk.send(unescape("%23twist_container"), "_asJQuery", [])]);
-(function($rec){smalltalk.send($rec, "_withQuery_", [query]);smalltalk.send($rec, "_withLimit_", [(10)]);smalltalk.send($rec, "_inContainer_", [container]);return smalltalk.send($rec, "_search", []);})(smalltalk.send((smalltalk.TwitterSearch || TwitterSearch), "_new", []));
+smalltalk.send((function(html){return (function($rec){smalltalk.send($rec, "_id_", [container]);smalltalk.send($rec, "_class_", ["TwitterSearch"]);return smalltalk.send($rec, "_with_", [(function(){return (function($rec){smalltalk.send($rec, "_with_", [smalltalk.send(smalltalk.send(unescape("Remove%20%22"), "__comma", [query]), "__comma", [unescape("%22")])]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_onClick_", [(function(event){smalltalk.send(smalltalk.send(self['@timelines'], "_at_ifAbsent_", [query, nil]), "_remove", []);return smalltalk.send(event, "_preventDefault", []);})]);})(smalltalk.send(html, "_a", []));})]);})(smalltalk.send(html, "_div", []));}), "_appendToJQuery_", [smalltalk.send(unescape("%23twist_container"), "_asJQuery", [])]);
+(search=(function($rec){smalltalk.send($rec, "_withQuery_", [query]);smalltalk.send($rec, "_withLimit_", [(10)]);smalltalk.send($rec, "_inContainer_", [container]);return smalltalk.send($rec, "_search", []);})(smalltalk.send((smalltalk.TwitterSearch || TwitterSearch), "_new", [])));
+smalltalk.send(self['@timelines'], "_at_put_", [query, search]);
 return self;}
 }),
 smalltalk.TwistApp);
@@ -40,6 +43,7 @@ selector: unescape('initialize'),
 fn: function (){
 var self=this;
 (self['@count']=(0));
+(self['@timelines']=smalltalk.send((smalltalk.Dictionary || Dictionary), "_new", []));
 return self;}
 }),
 smalltalk.TwistApp);
@@ -244,7 +248,7 @@ smalltalk.TwitterResult);
 smalltalk.addClass('TwitterTimeline', smalltalk.TWWidget, [], 'Twist');
 
 
-smalltalk.addClass('TwitterSearch', smalltalk.TwitterTimeline, ['query', 'limit', 'container'], 'Twist');
+smalltalk.addClass('TwitterSearch', smalltalk.TwitterTimeline, ['query', 'limit', 'container', 'polling', 'interval', 'lastid'], 'Twist');
 smalltalk.addMethod(
 unescape('_initialize'),
 smalltalk.method({
@@ -254,6 +258,8 @@ var self=this;
 (self['@query']="");
 (self['@limit']=(10));
 (self['@container']=nil);
+(self['@lastid']=(0));
+(self['@interval']=smalltalk.send((typeof window == 'undefined' ? nil : window), "_setInterval_length_", [(function(){return smalltalk.send(self, "_search", []);}), (15000)]));
 return self;}
 }),
 smalltalk.TwitterSearch);
@@ -275,7 +281,8 @@ smalltalk.method({
 selector: unescape('search'),
 fn: function (){
 var self=this;
-smalltalk.send((typeof jQuery == 'undefined' ? nil : jQuery), "_ajax_options_", [smalltalk.send(smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [smalltalk.send(self['@query'], "_escaped", [])]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D")]), "__comma", [self['@limit']]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]),smalltalk.send("dataType", "__minus_gt", ["jsonp"]),smalltalk.send("success", "__minus_gt", [(function(results){return smalltalk.send(self, "_successWithData_", [results]);})]),smalltalk.send("error", "__minus_gt", [(function(){return smalltalk.send(self, "_displayError_", [smalltalk.send("Failed to search for: ", "__comma", [self['@query']])]);})])])]);
+smalltalk.send(smalltalk.send((typeof window == 'undefined' ? nil : window), "_console", []), "_log_", [smalltalk.send("Running a search for ", "__comma", [self['@query']])]);
+smalltalk.send((typeof jQuery == 'undefined' ? nil : jQuery), "_ajax_options_", [smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [smalltalk.send(self['@query'], "_escaped", [])]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D")]), "__comma", [self['@limit']]), "__comma", [unescape("%26since_id%3D")]), "__comma", [self['@lastid']]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]),smalltalk.send("dataType", "__minus_gt", ["jsonp"]),smalltalk.send("success", "__minus_gt", [(function(results){return smalltalk.send(self, "_successWithData_", [results]);})]),smalltalk.send("error", "__minus_gt", [(function(){return smalltalk.send(self, "_displayError_", [smalltalk.send("Failed to search for: ", "__comma", [self['@query']])]);})])])]);
 return self;}
 }),
 smalltalk.TwitterSearch);
@@ -308,7 +315,8 @@ smalltalk.method({
 selector: unescape('successWithData%3A'),
 fn: function (theData){
 var self=this;
-(($receiver = self['@container']) != nil && $receiver != undefined) ? (function(){return smalltalk.send(smalltalk.send(theData, "_results", []), "_do_", [(function(result){return (function($rec){smalltalk.send($rec, "_withData_", [result]);return smalltalk.send($rec, "_appendToJQuery_", [smalltalk.send(self['@container'], "_asJQuery", [])]);})(smalltalk.send((smalltalk.TwitterResult || TwitterResult), "_new", []));})]);})() : nil;
+(($receiver = self['@container']) != nil && $receiver != undefined) ? (function(){return smalltalk.send(smalltalk.send(smalltalk.send(theData, "_results", []), "_reversed", []), "_do_", [(function(result){var view=nil;
+((($receiver = ((($receiver = smalltalk.send(result, "_at_", ["id"])).klass === smalltalk.Number) ? $receiver >self['@lastid'] : smalltalk.send($receiver, "__gt", [self['@lastid']]))).klass === smalltalk.Boolean) ? ($receiver ? (function(){return (self['@lastid']=smalltalk.send(result, "_at_", ["id"]));})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){return (self['@lastid']=smalltalk.send(result, "_at_", ["id"]));})]));(view=smalltalk.send(smalltalk.send((smalltalk.HTMLCanvas || HTMLCanvas), "_new", []), "_div", []));smalltalk.send(smalltalk.send(self['@container'], "_asJQuery", []), "_prepend_", [smalltalk.send(view, "_asJQuery", [])]);return (function($rec){smalltalk.send($rec, "_withData_", [result]);return smalltalk.send($rec, "_appendToJQuery_", [smalltalk.send(view, "_asJQuery", [])]);})(smalltalk.send((smalltalk.TwitterResult || TwitterResult), "_new", []));})]);})() : nil;
 return self;}
 }),
 smalltalk.TwitterSearch);
@@ -319,7 +327,19 @@ smalltalk.method({
 selector: unescape('inContainer%3A'),
 fn: function (containerString){
 var self=this;
-(self['@container']=smalltalk.send(".", "__comma", [smalltalk.send(containerString, "_asString", [])]));
+(self['@container']=smalltalk.send(unescape("%23"), "__comma", [smalltalk.send(containerString, "_asString", [])]));
+return self;}
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_remove'),
+smalltalk.method({
+selector: unescape('remove'),
+fn: function (){
+var self=this;
+smalltalk.send(smalltalk.send(self['@container'], "_asJQuery", []), "_remove", []);
+smalltalk.send((typeof window == 'undefined' ? nil : window), "_clearInterval_", [self['@interval']]);
 return self;}
 }),
 smalltalk.TwitterSearch);

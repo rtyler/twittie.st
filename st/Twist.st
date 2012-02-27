@@ -4,7 +4,7 @@ Widget subclass: #TWWidget
 	category: 'Twist'!
 
 Object subclass: #TwistApp
-	instanceVariableNames: 'models count'
+	instanceVariableNames: 'models count timelines'
 	category: 'Twist'!
 !TwistApp commentStamp!
 Main entry point for the Twist application, runs as a singleton object on the page!
@@ -17,20 +17,28 @@ models
 !
 
 search
-	| query container |
+	| query container search |
 	query := '#twist_search_box' asJQuery val.
+	'#twist_search_box' asJQuery val: ''.
 	" XXX: This needs to go away as soon as we cleanly support multiple timelines "
 	'#twist_container' asJQuery empty.
 
 	container := 'search_for_', count asString.
 	count := count + 1.
 
-	[ :html | html div class: container ] appendToJQuery: '#twist_container' asJQuery.
-	TwitterSearch new withQuery: query; withLimit: 10; inContainer: container; search.
+	[ :html |
+		html div id: container; class: 'TwitterSearch'; with: [
+			html a with: 'Remove "', query, '"';
+					href: '#';
+					onClick: [ :event | (timelines at: query ifAbsent: nil) remove. event preventDefault ]. 
+			]] appendToJQuery: '#twist_container' asJQuery.
+	search := TwitterSearch new withQuery: query; withLimit: 10; inContainer: container; search.
+	timelines at: query put: search.
 !
 
 initialize
 	count := 0.
+	timelines := Dictionary new.
 ! !
 
 TwistApp class instanceVariableNames: 'app'!
@@ -174,7 +182,7 @@ TWWidget subclass: #TwitterTimeline
 	category: 'Twist'!
 
 TwitterTimeline subclass: #TwitterSearch
-	instanceVariableNames: 'query limit container'
+	instanceVariableNames: 'query limit container polling interval lastid'
 	category: 'Twist'!
 
 !TwitterSearch methodsFor: 'not yet classified'!
@@ -183,6 +191,8 @@ initialize
 	query := ''.
 	limit := 10.
 	container := nil.
+	lastid := 0.
+	interval := window setInterval: [ self search ] length: 15000.
 !
 
 withQuery: aQuery
@@ -191,7 +201,8 @@ withQuery: aQuery
 
 search
 	"Run the actual search JSONP request"
-	jQuery ajax: 'http://search.twitter.com/search.json?q=', query escaped, '&callback=?&maxResults=', limit
+	window console log: 'Running a search for ', query.
+	jQuery ajax: 'http://search.twitter.com/search.json?q=', query escaped, '&callback=?&maxResults=', limit, '&since_id=', lastid
 			options: #{'type' -> 'GET'.
 					'dataType' -> 'jsonp'.
 					'success' -> [ :results | self successWithData: results ].
@@ -210,14 +221,25 @@ displayError: anErrorString
 successWithData: theData
 	"Build out and render the results from a search"
 	container ifNotNil: [
-			 	theData results do: [ :result |
-					TwitterResult new withData: result; appendToJQuery: container asJQuery]].
+			 	theData results reversed do: [ :result |
+					| view |
+					(result at: 'id') > lastid
+							ifTrue: [ lastid := result at: 'id' ].
+					view := HTMLCanvas new div.
+					container asJQuery prepend: view asJQuery.
+					TwitterResult new withData: result; appendToJQuery: view asJQuery]].
 !
 
 inContainer: containerString
 	"Set the div container string for this specific search object"
 
-	"NOTE: Making sure to prefix the container with a dot to make it valid jQuery CSS Selector syntax"
-	container := '.', containerString asString.
+	"NOTE: Making sure to prefix the container with a hash to make it valid jQuery CSS Selector syntax"
+	container := '#', containerString asString.
+!
+
+remove
+	"Stop the update and remove the DOM element"
+	container asJQuery remove.
+	window clearInterval: interval.
 ! !
 

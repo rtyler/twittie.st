@@ -2,7 +2,7 @@ smalltalk.addPackage('Twist', {});
 smalltalk.addClass('TWWidget', smalltalk.Widget, [], 'Twist');
 
 
-smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count'], 'Twist');
+smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count', 'timelines'], 'Twist');
 smalltalk.TwistApp.comment=unescape('Main%20entry%20point%20for%20the%20Twist%20application%2C%20runs%20as%20a%20singleton%20object%20on%20the%20page')
 smalltalk.addMethod(
 unescape('_models'),
@@ -30,16 +30,19 @@ fn: function (){
 var self=this;
 var query=nil;
 var container=nil;
+var search=nil;
 (query=smalltalk.send(smalltalk.send(unescape("%23twist_search_box"), "_asJQuery", []), "_val", []));
+smalltalk.send(smalltalk.send(unescape("%23twist_search_box"), "_asJQuery", []), "_val_", [""]);
 smalltalk.send(smalltalk.send(unescape("%23twist_container"), "_asJQuery", []), "_empty", []);
 (container=smalltalk.send("search_for_", "__comma", [smalltalk.send(self['@count'], "_asString", [])]));
 (self['@count']=((($receiver = self['@count']).klass === smalltalk.Number) ? $receiver +(1) : smalltalk.send($receiver, "__plus", [(1)])));
-smalltalk.send((function(html){return smalltalk.send(smalltalk.send(html, "_div", []), "_class_", [container]);}), "_appendToJQuery_", [smalltalk.send(unescape("%23twist_container"), "_asJQuery", [])]);
-(function($rec){smalltalk.send($rec, "_withQuery_", [query]);smalltalk.send($rec, "_withLimit_", [(10)]);smalltalk.send($rec, "_inContainer_", [container]);return smalltalk.send($rec, "_search", []);})(smalltalk.send((smalltalk.TwitterSearch || TwitterSearch), "_new", []));
+smalltalk.send((function(html){return (function($rec){smalltalk.send($rec, "_id_", [container]);smalltalk.send($rec, "_class_", ["TwitterSearch"]);return smalltalk.send($rec, "_with_", [(function(){return (function($rec){smalltalk.send($rec, "_with_", [smalltalk.send(smalltalk.send(unescape("Remove%20%22"), "__comma", [query]), "__comma", [unescape("%22")])]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_onClick_", [(function(event){smalltalk.send(smalltalk.send(self['@timelines'], "_at_ifAbsent_", [query, nil]), "_remove", []);return smalltalk.send(event, "_preventDefault", []);})]);})(smalltalk.send(html, "_a", []));})]);})(smalltalk.send(html, "_div", []));}), "_appendToJQuery_", [smalltalk.send(unescape("%23twist_container"), "_asJQuery", [])]);
+(search=(function($rec){smalltalk.send($rec, "_withQuery_", [query]);smalltalk.send($rec, "_withLimit_", [(10)]);smalltalk.send($rec, "_inContainer_", [container]);return smalltalk.send($rec, "_search", []);})(smalltalk.send((smalltalk.TwitterSearch || TwitterSearch), "_new", [])));
+smalltalk.send(self['@timelines'], "_at_put_", [query, search]);
 return self;},
 args: [],
-source: unescape('search%0A%09%7C%20query%20container%20%7C%0A%09query%20%3A%3D%20%27%23twist_search_box%27%20asJQuery%20val.%0A%09%22%20XXX%3A%20This%20needs%20to%20go%20away%20as%20soon%20as%20we%20cleanly%20support%20multiple%20timelines%20%22%0A%09%27%23twist_container%27%20asJQuery%20empty.%0A%0A%09container%20%3A%3D%20%27search_for_%27%2C%20count%20asString.%0A%09count%20%3A%3D%20count%20+%201.%0A%0A%09%5B%20%3Ahtml%20%7C%20html%20div%20class%3A%20container%20%5D%20appendToJQuery%3A%20%27%23twist_container%27%20asJQuery.%0A%09TwitterSearch%20new%20withQuery%3A%20query%3B%20withLimit%3A%2010%3B%20inContainer%3A%20container%3B%20search.'),
-messageSends: ["val", "asJQuery", "empty", unescape("%2C"), "asString", unescape("+"), "appendToJQuery:", "class:", "div", "withQuery:", "withLimit:", "inContainer:", "search", "new"],
+source: unescape('search%0A%09%7C%20query%20container%20search%20%7C%0A%09query%20%3A%3D%20%27%23twist_search_box%27%20asJQuery%20val.%0A%09%27%23twist_search_box%27%20asJQuery%20val%3A%20%27%27.%0A%09%22%20XXX%3A%20This%20needs%20to%20go%20away%20as%20soon%20as%20we%20cleanly%20support%20multiple%20timelines%20%22%0A%09%27%23twist_container%27%20asJQuery%20empty.%0A%0A%09container%20%3A%3D%20%27search_for_%27%2C%20count%20asString.%0A%09count%20%3A%3D%20count%20+%201.%0A%0A%09%5B%20%3Ahtml%20%7C%0A%09%09html%20div%20id%3A%20container%3B%20class%3A%20%27TwitterSearch%27%3B%20with%3A%20%5B%0A%09%09%09html%20a%20with%3A%20%27Remove%20%22%27%2C%20query%2C%20%27%22%27%3B%0A%09%09%09%09%09href%3A%20%27%23%27%3B%0A%09%09%09%09%09onClick%3A%20%5B%20%3Aevent%20%7C%20%28timelines%20at%3A%20query%20ifAbsent%3A%20nil%29%20remove.%20event%20preventDefault%20%5D.%20%0A%09%09%09%5D%5D%20appendToJQuery%3A%20%27%23twist_container%27%20asJQuery.%0A%09search%20%3A%3D%20TwitterSearch%20new%20withQuery%3A%20query%3B%20withLimit%3A%2010%3B%20inContainer%3A%20container%3B%20search.%0A%09timelines%20at%3A%20query%20put%3A%20search.'),
+messageSends: ["val", "asJQuery", "val:", "empty", unescape("%2C"), "asString", unescape("+"), "appendToJQuery:", "id:", "class:", "with:", "href:", "onClick:", "remove", "at:ifAbsent:", "preventDefault", "a", "div", "withQuery:", "withLimit:", "inContainer:", "search", "new", "at:put:"],
 referencedClasses: ["TwitterSearch"]
 }),
 smalltalk.TwistApp);
@@ -52,11 +55,12 @@ category: 'accessors',
 fn: function (){
 var self=this;
 (self['@count']=(0));
+(self['@timelines']=smalltalk.send((smalltalk.Dictionary || Dictionary), "_new", []));
 return self;},
 args: [],
-source: unescape('initialize%0A%09count%20%3A%3D%200.'),
-messageSends: [],
-referencedClasses: []
+source: unescape('initialize%0A%09count%20%3A%3D%200.%0A%09timelines%20%3A%3D%20Dictionary%20new.'),
+messageSends: ["new"],
+referencedClasses: ["Dictionary"]
 }),
 smalltalk.TwistApp);
 
@@ -335,7 +339,7 @@ smalltalk.TwitterResult);
 smalltalk.addClass('TwitterTimeline', smalltalk.TWWidget, [], 'Twist');
 
 
-smalltalk.addClass('TwitterSearch', smalltalk.TwitterTimeline, ['query', 'limit', 'container'], 'Twist');
+smalltalk.addClass('TwitterSearch', smalltalk.TwitterTimeline, ['query', 'limit', 'container', 'polling', 'interval', 'lastid'], 'Twist');
 smalltalk.addMethod(
 unescape('_initialize'),
 smalltalk.method({
@@ -346,10 +350,12 @@ var self=this;
 (self['@query']="");
 (self['@limit']=(10));
 (self['@container']=nil);
+(self['@lastid']=(0));
+(self['@interval']=smalltalk.send((typeof window == 'undefined' ? nil : window), "_setInterval_length_", [(function(){return smalltalk.send(self, "_search", []);}), (15000)]));
 return self;},
 args: [],
-source: unescape('initialize%0A%09query%20%3A%3D%20%27%27.%0A%09limit%20%3A%3D%2010.%0A%09container%20%3A%3D%20nil.'),
-messageSends: [],
+source: unescape('initialize%0A%09query%20%3A%3D%20%27%27.%0A%09limit%20%3A%3D%2010.%0A%09container%20%3A%3D%20nil.%0A%09lastid%20%3A%3D%200.%0A%09interval%20%3A%3D%20window%20setInterval%3A%20%5B%20self%20search%20%5D%20length%3A%2015000.'),
+messageSends: ["setInterval:length:", "search"],
 referencedClasses: []
 }),
 smalltalk.TwitterSearch);
@@ -377,11 +383,12 @@ selector: unescape('search'),
 category: 'not yet classified',
 fn: function (){
 var self=this;
-smalltalk.send((typeof jQuery == 'undefined' ? nil : jQuery), "_ajax_options_", [smalltalk.send(smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [smalltalk.send(self['@query'], "_escaped", [])]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D")]), "__comma", [self['@limit']]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]),smalltalk.send("dataType", "__minus_gt", ["jsonp"]),smalltalk.send("success", "__minus_gt", [(function(results){return smalltalk.send(self, "_successWithData_", [results]);})]),smalltalk.send("error", "__minus_gt", [(function(){return smalltalk.send(self, "_displayError_", [smalltalk.send("Failed to search for: ", "__comma", [self['@query']])]);})])])]);
+smalltalk.send(smalltalk.send((typeof window == 'undefined' ? nil : window), "_console", []), "_log_", [smalltalk.send("Running a search for ", "__comma", [self['@query']])]);
+smalltalk.send((typeof jQuery == 'undefined' ? nil : jQuery), "_ajax_options_", [smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [smalltalk.send(self['@query'], "_escaped", [])]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D")]), "__comma", [self['@limit']]), "__comma", [unescape("%26since_id%3D")]), "__comma", [self['@lastid']]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]),smalltalk.send("dataType", "__minus_gt", ["jsonp"]),smalltalk.send("success", "__minus_gt", [(function(results){return smalltalk.send(self, "_successWithData_", [results]);})]),smalltalk.send("error", "__minus_gt", [(function(){return smalltalk.send(self, "_displayError_", [smalltalk.send("Failed to search for: ", "__comma", [self['@query']])]);})])])]);
 return self;},
 args: [],
-source: unescape('search%0A%09%22Run%20the%20actual%20search%20JSONP%20request%22%0A%09jQuery%20ajax%3A%20%27http%3A//search.twitter.com/search.json%3Fq%3D%27%2C%20query%20escaped%2C%20%27%26callback%3D%3F%26maxResults%3D%27%2C%20limit%0A%09%09%09options%3A%20%23%7B%27type%27%20-%3E%20%27GET%27.%0A%09%09%09%09%09%27dataType%27%20-%3E%20%27jsonp%27.%0A%09%09%09%09%09%27success%27%20-%3E%20%5B%20%3Aresults%20%7C%20self%20successWithData%3A%20results%20%5D.%0A%09%09%09%09%09%27error%27%20-%3E%20%5B%20self%20displayError%3A%20%27Failed%20to%20search%20for%3A%20%27%2C%20query%5D%7D.'),
-messageSends: ["ajax:options:", unescape("%2C"), "escaped", unescape("-%3E"), "successWithData:", "displayError:"],
+source: unescape('search%0A%09%22Run%20the%20actual%20search%20JSONP%20request%22%0A%09window%20console%20log%3A%20%27Running%20a%20search%20for%20%27%2C%20query.%0A%09jQuery%20ajax%3A%20%27http%3A//search.twitter.com/search.json%3Fq%3D%27%2C%20query%20escaped%2C%20%27%26callback%3D%3F%26maxResults%3D%27%2C%20limit%2C%20%27%26since_id%3D%27%2C%20lastid%0A%09%09%09options%3A%20%23%7B%27type%27%20-%3E%20%27GET%27.%0A%09%09%09%09%09%27dataType%27%20-%3E%20%27jsonp%27.%0A%09%09%09%09%09%27success%27%20-%3E%20%5B%20%3Aresults%20%7C%20self%20successWithData%3A%20results%20%5D.%0A%09%09%09%09%09%27error%27%20-%3E%20%5B%20self%20displayError%3A%20%27Failed%20to%20search%20for%3A%20%27%2C%20query%5D%7D.'),
+messageSends: ["log:", "console", unescape("%2C"), "ajax:options:", "escaped", unescape("-%3E"), "successWithData:", "displayError:"],
 referencedClasses: []
 }),
 smalltalk.TwitterSearch);
@@ -425,12 +432,13 @@ selector: unescape('successWithData%3A'),
 category: 'not yet classified',
 fn: function (theData){
 var self=this;
-(($receiver = self['@container']) != nil && $receiver != undefined) ? (function(){return smalltalk.send(smalltalk.send(theData, "_results", []), "_do_", [(function(result){return (function($rec){smalltalk.send($rec, "_withData_", [result]);return smalltalk.send($rec, "_appendToJQuery_", [smalltalk.send(self['@container'], "_asJQuery", [])]);})(smalltalk.send((smalltalk.TwitterResult || TwitterResult), "_new", []));})]);})() : nil;
+(($receiver = self['@container']) != nil && $receiver != undefined) ? (function(){return smalltalk.send(smalltalk.send(smalltalk.send(theData, "_results", []), "_reversed", []), "_do_", [(function(result){var view=nil;
+((($receiver = ((($receiver = smalltalk.send(result, "_at_", ["id"])).klass === smalltalk.Number) ? $receiver >self['@lastid'] : smalltalk.send($receiver, "__gt", [self['@lastid']]))).klass === smalltalk.Boolean) ? ($receiver ? (function(){return (self['@lastid']=smalltalk.send(result, "_at_", ["id"]));})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){return (self['@lastid']=smalltalk.send(result, "_at_", ["id"]));})]));(view=smalltalk.send(smalltalk.send((smalltalk.HTMLCanvas || HTMLCanvas), "_new", []), "_div", []));smalltalk.send(smalltalk.send(self['@container'], "_asJQuery", []), "_prepend_", [smalltalk.send(view, "_asJQuery", [])]);return (function($rec){smalltalk.send($rec, "_withData_", [result]);return smalltalk.send($rec, "_appendToJQuery_", [smalltalk.send(view, "_asJQuery", [])]);})(smalltalk.send((smalltalk.TwitterResult || TwitterResult), "_new", []));})]);})() : nil;
 return self;},
 args: ["theData"],
-source: unescape('successWithData%3A%20theData%0A%09%22Build%20out%20and%20render%20the%20results%20from%20a%20search%22%0A%09container%20ifNotNil%3A%20%5B%0A%09%09%09%20%09theData%20results%20do%3A%20%5B%20%3Aresult%20%7C%0A%09%09%09%09%09TwitterResult%20new%20withData%3A%20result%3B%20appendToJQuery%3A%20container%20asJQuery%5D%5D.'),
-messageSends: ["ifNotNil:", "do:", "results", "withData:", "appendToJQuery:", "asJQuery", "new"],
-referencedClasses: ["TwitterResult"]
+source: unescape('successWithData%3A%20theData%0A%09%22Build%20out%20and%20render%20the%20results%20from%20a%20search%22%0A%09container%20ifNotNil%3A%20%5B%0A%09%09%09%20%09theData%20results%20reversed%20do%3A%20%5B%20%3Aresult%20%7C%0A%09%09%09%09%09%7C%20view%20%7C%0A%09%09%09%09%09%28result%20at%3A%20%27id%27%29%20%3E%20lastid%0A%09%09%09%09%09%09%09ifTrue%3A%20%5B%20lastid%20%3A%3D%20result%20at%3A%20%27id%27%20%5D.%0A%09%09%09%09%09view%20%3A%3D%20HTMLCanvas%20new%20div.%0A%09%09%09%09%09container%20asJQuery%20prepend%3A%20view%20asJQuery.%0A%09%09%09%09%09TwitterResult%20new%20withData%3A%20result%3B%20appendToJQuery%3A%20view%20asJQuery%5D%5D.%0A'),
+messageSends: ["ifNotNil:", "do:", "reversed", "results", "ifTrue:", unescape("%3E"), "at:", "div", "new", "prepend:", "asJQuery", "withData:", "appendToJQuery:"],
+referencedClasses: ["HTMLCanvas", "TwitterResult"]
 }),
 smalltalk.TwitterSearch);
 
@@ -441,11 +449,28 @@ selector: unescape('inContainer%3A'),
 category: 'not yet classified',
 fn: function (containerString){
 var self=this;
-(self['@container']=smalltalk.send(".", "__comma", [smalltalk.send(containerString, "_asString", [])]));
+(self['@container']=smalltalk.send(unescape("%23"), "__comma", [smalltalk.send(containerString, "_asString", [])]));
 return self;},
 args: ["containerString"],
-source: unescape('inContainer%3A%20containerString%0A%09%22Set%20the%20div%20container%20string%20for%20this%20specific%20search%20object%22%0A%0A%09%22NOTE%3A%20Making%20sure%20to%20prefix%20the%20container%20with%20a%20dot%20to%20make%20it%20valid%20jQuery%20CSS%20Selector%20syntax%22%0A%09container%20%3A%3D%20%27.%27%2C%20containerString%20asString.'),
+source: unescape('inContainer%3A%20containerString%0A%09%22Set%20the%20div%20container%20string%20for%20this%20specific%20search%20object%22%0A%0A%09%22NOTE%3A%20Making%20sure%20to%20prefix%20the%20container%20with%20a%20hash%20to%20make%20it%20valid%20jQuery%20CSS%20Selector%20syntax%22%0A%09container%20%3A%3D%20%27%23%27%2C%20containerString%20asString.'),
 messageSends: [unescape("%2C"), "asString"],
+referencedClasses: []
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_remove'),
+smalltalk.method({
+selector: unescape('remove'),
+category: 'not yet classified',
+fn: function (){
+var self=this;
+smalltalk.send(smalltalk.send(self['@container'], "_asJQuery", []), "_remove", []);
+smalltalk.send((typeof window == 'undefined' ? nil : window), "_clearInterval_", [self['@interval']]);
+return self;},
+args: [],
+source: unescape('remove%0A%09%22Stop%20the%20update%20and%20remove%20the%20DOM%20element%22%0A%09container%20asJQuery%20remove.%0A%09window%20clearInterval%3A%20interval.'),
+messageSends: ["remove", "asJQuery", "clearInterval:"],
 referencedClasses: []
 }),
 smalltalk.TwitterSearch);
