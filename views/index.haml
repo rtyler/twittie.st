@@ -3,6 +3,7 @@
     %title
       Twi.st
     = embed_amber
+    %link{:media => 'screen', :rel => 'stylesheet', :href => '/css/twist.css'}
   %body
     - if Resin.development?
       %div{:style => 'float: right; clear: all'}
@@ -20,4 +21,9 @@
           %a{:href => 'http://www.zombo.com'}<
             this
           better suits your needs?
+    %div{:class => 'twist_search'}
+      %form{:onsubmit => 'smalltalk.TwistApp._current()._search(); return false;', :name => 'search'}
+        %input{:type => 'text', :name => 'q', :id => 'twist_search_box'}/
+        %button{:type => 'submit'}
+          Search
     %div{:id => 'twist_container'}

@@ -1,5 +1,65 @@
 smalltalk.addPackage('Twist', {});
-smalltalk.addClass('TwitterText', smalltalk.Widget, ['text', 'hashtags', 'mentions', 'links'], 'Twist');
+smalltalk.addClass('TWWidget', smalltalk.Widget, [], 'Twist');
+
+
+smalltalk.addClass('TwistApp', smalltalk.Object, ['models', 'count'], 'Twist');
+smalltalk.addMethod(
+unescape('_models'),
+smalltalk.method({
+selector: unescape('models'),
+fn: function () {
+    var self = this;
+    return self['@models'];
+    return self;
+}
+}),
+smalltalk.TwistApp);
+
+smalltalk.addMethod(
+unescape('_search'),
+smalltalk.method({
+selector: unescape('search'),
+fn: function (){
+var self=this;
+var query=nil;
+var container=nil;
+(query=smalltalk.send(smalltalk.send(unescape("%23twist_search_box"), "_asJQuery", []), "_val", []));
+smalltalk.send(smalltalk.send(unescape("%23twist_container"), "_asJQuery", []), "_empty", []);
+(container=smalltalk.send("search_for_", "__comma", [smalltalk.send(self['@count'], "_asString", [])]));
+(self['@count']=((($receiver = self['@count']).klass === smalltalk.Number) ? $receiver +(1) : smalltalk.send($receiver, "__plus", [(1)])));
+smalltalk.send((function(html){return smalltalk.send(smalltalk.send(html, "_div", []), "_class_", [container]);}), "_appendToJQuery_", [smalltalk.send(unescape("%23twist_container"), "_asJQuery", [])]);
+(function($rec){smalltalk.send($rec, "_withQuery_", [query]);smalltalk.send($rec, "_withLimit_", [(10)]);smalltalk.send($rec, "_inContainer_", [container]);return smalltalk.send($rec, "_search", []);})(smalltalk.send((smalltalk.TwitterSearch || TwitterSearch), "_new", []));
+return self;}
+}),
+smalltalk.TwistApp);
+
+smalltalk.addMethod(
+unescape('_initialize'),
+smalltalk.method({
+selector: unescape('initialize'),
+fn: function (){
+var self=this;
+(self['@count']=(0));
+return self;}
+}),
+smalltalk.TwistApp);
+
+
+smalltalk.TwistApp.klass.iVarNames = ['app'];
+smalltalk.addMethod(
+unescape('_current'),
+smalltalk.method({
+selector: unescape('current'),
+fn: function () {
+    var self = this;
+    return ($receiver = self['@app']) == nil || $receiver == undefined ? function () {return self['@app'] = smalltalk.send(self, "_new", [], smalltalk.Object.klass);}() : $receiver;
+    return self;
+}
+}),
+smalltalk.TwistApp.klass);
+
+
+smalltalk.addClass('TwitterText', smalltalk.TWWidget, ['text', 'hashtags', 'mentions', 'links'], 'Twist');
 smalltalk.addMethod(
 unescape('_hashtags'),
 smalltalk.method({
@@ -70,22 +130,10 @@ smalltalk.addMethod(
 unescape('_renderOn_'),
 smalltalk.method({
 selector: unescape('renderOn%3A'),
-fn: function (html) {
-    var self = this;
-    (function ($rec) {smalltalk.send($rec, "_class_", ["TwitterText"]);return smalltalk.send($rec, "_with_", [function () {return smalltalk.send(smalltalk.send(self['@text'], "_tokenize_", [" "]), "_do_", [function (token) {smalltalk.send(self, "_renderToken_on_", [token, html]);return smalltalk.send(html, "_with_", [" "]);}]);}]);}(smalltalk.send(html, "_p", [])));
-    return self;
-}
-}),
-smalltalk.TwitterText);
-
-smalltalk.addMethod(
-unescape('_renderTokenOn_'),
-smalltalk.method({
-selector: unescape('renderTokenOn%3A'),
-fn: function (html) {
-    var self = this;
-    return self;
-}
+fn: function (html){
+var self=this;
+(function($rec){smalltalk.send($rec, "_class_", ["TwitterText"]);return smalltalk.send($rec, "_with_", [(function(){return smalltalk.send(smalltalk.send(self['@text'], "_tokenize_", [" "]), "_do_", [(function(token){((($receiver = smalltalk.send(smalltalk.send(token, "_size", []), "__eq", [(0)])).klass === smalltalk.Boolean) ? (! $receiver ? (function(){return smalltalk.send(self, "_renderToken_on_", [token, html]);})() : nil) : smalltalk.send($receiver, "_ifFalse_", [(function(){return smalltalk.send(self, "_renderToken_on_", [token, html]);})]));return smalltalk.send(html, "_with_", [" "]);})]);})]);})(smalltalk.send(html, "_p", []));
+return self;}
 }),
 smalltalk.TwitterText);
 
@@ -93,20 +141,41 @@ smalltalk.addMethod(
 unescape('_renderToken_on_'),
 smalltalk.method({
 selector: unescape('renderToken%3Aon%3A'),
-fn: function (token, html) {
-    var self = this;
-    var rendered = nil;
-    rendered = false;
-    (function ($rec) {($receiver = $rec).klass === smalltalk.Boolean ? $receiver ? function () {(function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextLink"]);smalltalk.send($rec, "_href_", [token]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", [])));return rendered = true;}() : nil : smalltalk.send($receiver, "_ifTrue_", [function () {(function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextLink"]);smalltalk.send($rec, "_href_", [token]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", [])));return rendered = true;}]);return ($receiver = $rec).klass === smalltalk.Boolean ? !$receiver ? function () {($receiver = smalltalk.send(smalltalk.send(token, "_at_", [1]), "__eq", [unescape("%23")])).klass === smalltalk.Boolean ? $receiver ? function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextHashTag"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked hash tag: ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}() : nil : smalltalk.send($receiver, "_ifTrue_", [function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextHashTag"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked hash tag: ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}]);return ($receiver = smalltalk.send(smalltalk.send(token, "_at_", [1]), "__eq", [unescape("@")])).klass === smalltalk.Boolean ? $receiver ? function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextMention"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked mention for ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}() : nil : smalltalk.send($receiver, "_ifTrue_", [function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextMention"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked mention for ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}]);}() : nil : smalltalk.send($receiver, "_ifFalse_", [function () {($receiver = smalltalk.send(smalltalk.send(token, "_at_", [1]), "__eq", [unescape("%23")])).klass === smalltalk.Boolean ? $receiver ? function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextHashTag"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked hash tag: ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}() : nil : smalltalk.send($receiver, "_ifTrue_", [function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextHashTag"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked hash tag: ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}]);return ($receiver = smalltalk.send(smalltalk.send(token, "_at_", [1]), "__eq", [unescape("@")])).klass === smalltalk.Boolean ? $receiver ? function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextMention"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked mention for ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}() : nil : smalltalk.send($receiver, "_ifTrue_", [function () {rendered = true;return function ($rec) {smalltalk.send($rec, "_class_", ["TwitterTextMention"]);smalltalk.send($rec, "_onClick_", [function (event) {smalltalk.send(typeof window == "undefined" ? nil : window, "_alert_", [smalltalk.send("Clicked mention for ", "__comma", [token])]);return smalltalk.send(event, "_preventDefault", []);}]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [token]);}(smalltalk.send(html, "_a", []));}]);}]);}(smalltalk.send(token, "_match_", [unescape("%28https%3F%3A%5C/%5C/%5B%5E%5Cs%5D+%29")])));
-    ($receiver = rendered).klass === smalltalk.Boolean ? !$receiver ? function () {return smalltalk.send(html, "_with_", [token]);}() : nil : smalltalk.send($receiver, "_ifFalse_", [function () {return smalltalk.send(html, "_with_", [token]);}]);
-    return self;
-}
+fn: function (token, html){
+var self=this;
+var rendered=nil;
+(rendered=false);
+(function($rec){((($receiver = $rec).klass === smalltalk.Boolean) ? ($receiver ? (function(){(function($rec){smalltalk.send($rec, "_class_", ["TwitterTextLink"]);smalltalk.send($rec, "_href_", [token]);return smalltalk.send($rec, "_with_", [token]);})(smalltalk.send(html, "_a", []));return (rendered=true);})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){(function($rec){smalltalk.send($rec, "_class_", ["TwitterTextLink"]);smalltalk.send($rec, "_href_", [token]);return smalltalk.send($rec, "_with_", [token]);})(smalltalk.send(html, "_a", []));return (rendered=true);})]));return ((($receiver = $rec).klass === smalltalk.Boolean) ? (! $receiver ? (function(){((($receiver = smalltalk.send(smalltalk.send(token, "_at_", [(1)]), "__eq", [unescape("%23")])).klass === smalltalk.Boolean) ? ($receiver ? (function(){(rendered=true);return smalltalk.send(self, "_renderHashTag_on_", [token, html]);})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){(rendered=true);return smalltalk.send(self, "_renderHashTag_on_", [token, html]);})]));return ((($receiver = smalltalk.send(smalltalk.send(token, "_at_", [(1)]), "__eq", [unescape("@")])).klass === smalltalk.Boolean) ? ($receiver ? (function(){(rendered=true);return smalltalk.send(self, "_renderMention_on_", [token, html]);})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){(rendered=true);return smalltalk.send(self, "_renderMention_on_", [token, html]);})]));})() : nil) : smalltalk.send($receiver, "_ifFalse_", [(function(){((($receiver = smalltalk.send(smalltalk.send(token, "_at_", [(1)]), "__eq", [unescape("%23")])).klass === smalltalk.Boolean) ? ($receiver ? (function(){(rendered=true);return smalltalk.send(self, "_renderHashTag_on_", [token, html]);})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){(rendered=true);return smalltalk.send(self, "_renderHashTag_on_", [token, html]);})]));return ((($receiver = smalltalk.send(smalltalk.send(token, "_at_", [(1)]), "__eq", [unescape("@")])).klass === smalltalk.Boolean) ? ($receiver ? (function(){(rendered=true);return smalltalk.send(self, "_renderMention_on_", [token, html]);})() : nil) : smalltalk.send($receiver, "_ifTrue_", [(function(){(rendered=true);return smalltalk.send(self, "_renderMention_on_", [token, html]);})]));})]));})(smalltalk.send(token, "_match_", [unescape("%28https%3F%3A%5C/%5C/%5B%5E%5Cs%5D+%29")]));
+((($receiver = rendered).klass === smalltalk.Boolean) ? (! $receiver ? (function(){return smalltalk.send(html, "_with_", [token]);})() : nil) : smalltalk.send($receiver, "_ifFalse_", [(function(){return smalltalk.send(html, "_with_", [token]);})]));
+return self;}
+}),
+smalltalk.TwitterText);
+
+smalltalk.addMethod(
+unescape('_renderHashTag_on_'),
+smalltalk.method({
+selector: unescape('renderHashTag%3Aon%3A'),
+fn: function (theTag, html){
+var self=this;
+(function($rec){smalltalk.send($rec, "_class_", ["TwitterTextHashTag"]);smalltalk.send($rec, "_onClick_", [(function(event){smalltalk.send((typeof window == 'undefined' ? nil : window), "_alert_", [smalltalk.send("Clicked hash tag: ", "__comma", [theTag])]);return smalltalk.send(event, "_preventDefault", []);})]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [theTag]);})(smalltalk.send(html, "_a", []));
+return self;}
+}),
+smalltalk.TwitterText);
+
+smalltalk.addMethod(
+unescape('_renderMention_on_'),
+smalltalk.method({
+selector: unescape('renderMention%3Aon%3A'),
+fn: function (aMention, html){
+var self=this;
+(function($rec){smalltalk.send($rec, "_class_", ["TwitterTextMention"]);smalltalk.send($rec, "_onClick_", [(function(event){smalltalk.send((typeof window == 'undefined' ? nil : window), "_alert_", [smalltalk.send("Clicked mention for ", "__comma", [aMention])]);return smalltalk.send(event, "_preventDefault", []);})]);smalltalk.send($rec, "_href_", [unescape("%23")]);return smalltalk.send($rec, "_with_", [aMention]);})(smalltalk.send(html, "_a", []));
+return self;}
 }),
 smalltalk.TwitterText);
 
 
 
-smalltalk.addClass('TwitterResult', smalltalk.Widget, ['text', 'username', 'image', 'lang'], 'Twist');
+smalltalk.addClass('TwitterResult', smalltalk.TWWidget, ['text', 'username', 'image', 'lang'], 'Twist');
 smalltalk.addMethod(
 unescape('_text'),
 smalltalk.method({
@@ -172,73 +241,88 @@ smalltalk.TwitterResult);
 
 
 
-smalltalk.addClass('TwistModel', smalltalk.Object, ['username'], 'Twist');
+smalltalk.addClass('TwitterTimeline', smalltalk.TWWidget, [], 'Twist');
+
+
+smalltalk.addClass('TwitterSearch', smalltalk.TwitterTimeline, ['query', 'limit', 'container'], 'Twist');
 smalltalk.addMethod(
-unescape('_feedUrl'),
+unescape('_initialize'),
 smalltalk.method({
-selector: unescape('feedUrl'),
-fn: function () {
-    var self = this;
-    return smalltalk.send(smalltalk.send(unescape("http%3A//twitter.com/status/user_timeline/"), "__comma", [self['@username']]), "__comma", [unescape(".json%3Fcount%3D10%26callback%3D%3F")]);
-    return self;
-}
+selector: unescape('initialize'),
+fn: function (){
+var self=this;
+(self['@query']="");
+(self['@limit']=(10));
+(self['@container']=nil);
+return self;}
 }),
-smalltalk.TwistModel);
-
-smalltalk.addMethod(
-unescape('_setUsername_'),
-smalltalk.method({
-selector: unescape('setUsername%3A'),
-fn: function (aName) {
-    var self = this;
-    self['@username'] = aName;
-    return self;
-}
-}),
-smalltalk.TwistModel);
-
-
-
-smalltalk.addClass('TwistApp', smalltalk.Object, ['models'], 'Twist');
-smalltalk.addMethod(
-unescape('_models'),
-smalltalk.method({
-selector: unescape('models'),
-fn: function () {
-    var self = this;
-    return self['@models'];
-    return self;
-}
-}),
-smalltalk.TwistApp);
-
-
-smalltalk.TwistApp.klass.iVarNames = ['app'];
-smalltalk.addMethod(
-unescape('_current'),
-smalltalk.method({
-selector: unescape('current'),
-fn: function () {
-    var self = this;
-    return ($receiver = self['@app']) == nil || $receiver == undefined ? function () {return self['@app'] = smalltalk.send(self, "_new", [], smalltalk.Object.klass);}() : $receiver;
-    return self;
-}
-}),
-smalltalk.TwistApp.klass);
-
-
-smalltalk.addClass('TwistSearch', smalltalk.Object, ['query'], 'Twist');
+smalltalk.TwitterSearch);
 
 smalltalk.addMethod(
-unescape('_search_limit_callback_'),
+unescape('_withQuery_'),
 smalltalk.method({
-selector: unescape('search%3Alimit%3Acallback%3A'),
-fn: function (theQuery, theCount, theBlock) {
-    var self = this;
-    smalltalk.send(typeof jQuery == "undefined" ? nil : jQuery, "_ajax_options_", [smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [theQuery]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D5")]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]), smalltalk.send("dataType", "__minus_gt", ["jsonp"]), smalltalk.send("success", "__minus_gt", [theBlock])])]);
-    return self;
-}
+selector: unescape('withQuery%3A'),
+fn: function (aQuery){
+var self=this;
+(self['@query']=aQuery);
+return self;}
 }),
-smalltalk.TwistSearch.klass);
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_search'),
+smalltalk.method({
+selector: unescape('search'),
+fn: function (){
+var self=this;
+smalltalk.send((typeof jQuery == 'undefined' ? nil : jQuery), "_ajax_options_", [smalltalk.send(smalltalk.send(smalltalk.send(unescape("http%3A//search.twitter.com/search.json%3Fq%3D"), "__comma", [smalltalk.send(self['@query'], "_escaped", [])]), "__comma", [unescape("%26callback%3D%3F%26maxResults%3D")]), "__comma", [self['@limit']]), smalltalk.HashedCollection._fromPairs_([smalltalk.send("type", "__minus_gt", ["GET"]),smalltalk.send("dataType", "__minus_gt", ["jsonp"]),smalltalk.send("success", "__minus_gt", [(function(results){return smalltalk.send(self, "_successWithData_", [results]);})]),smalltalk.send("error", "__minus_gt", [(function(){return smalltalk.send(self, "_displayError_", [smalltalk.send("Failed to search for: ", "__comma", [self['@query']])]);})])])]);
+return self;}
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_withLimit_'),
+smalltalk.method({
+selector: unescape('withLimit%3A'),
+fn: function (aLimit){
+var self=this;
+(self['@limit']=aLimit);
+return self;}
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_displayError_'),
+smalltalk.method({
+selector: unescape('displayError%3A'),
+fn: function (anErrorString){
+var self=this;
+smalltalk.send((typeof window == 'undefined' ? nil : window), "_alert_", [anErrorString]);
+return self;}
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_successWithData_'),
+smalltalk.method({
+selector: unescape('successWithData%3A'),
+fn: function (theData){
+var self=this;
+(($receiver = self['@container']) != nil && $receiver != undefined) ? (function(){return smalltalk.send(smalltalk.send(theData, "_results", []), "_do_", [(function(result){return (function($rec){smalltalk.send($rec, "_withData_", [result]);return smalltalk.send($rec, "_appendToJQuery_", [smalltalk.send(self['@container'], "_asJQuery", [])]);})(smalltalk.send((smalltalk.TwitterResult || TwitterResult), "_new", []));})]);})() : nil;
+return self;}
+}),
+smalltalk.TwitterSearch);
+
+smalltalk.addMethod(
+unescape('_inContainer_'),
+smalltalk.method({
+selector: unescape('inContainer%3A'),
+fn: function (containerString){
+var self=this;
+(self['@container']=smalltalk.send(".", "__comma", [smalltalk.send(containerString, "_asString", [])]));
+return self;}
+}),
+smalltalk.TwitterSearch);
+
 
 
