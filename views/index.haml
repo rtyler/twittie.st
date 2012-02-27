@@ -8,10 +8,16 @@
       %div{:style => 'float: right; clear: all'}
         %button{:onclick => "smalltalk.Browser._open();"}
           Run IDE
-        %br/
-        %button{:onclick => "smalltalk.ChuckRunner._current()._run();"}
-          Run Tests
       %br/
     %h1
       Twi.st
     %br/
+    %noscript
+      %center
+        %div{:class => 'noscript_warning'}
+          It appears you have JavaScript disabled. Unfortunately, Twi.st is a JavaScript-heavy
+          application. Perhaps
+          %a{:href => 'http://www.zombo.com'}<
+            this
+          better suits your needs?
+    %div{:id => 'twist_container'}
